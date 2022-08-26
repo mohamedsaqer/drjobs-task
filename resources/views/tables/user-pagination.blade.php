@@ -22,5 +22,5 @@
     @endforeach
 </table>
 <div id="pagination">
-    {!! $users->appends(['per_page' => '10'])->links() !!}
+    {!! $users->appends(['per_page' => '10'])->links("pagination::bootstrap-4") !!}
 </div>

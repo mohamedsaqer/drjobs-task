@@ -48,58 +48,68 @@
     </div>
 @endsection
 @section('scripts')
-    <script>
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $(function () {
-            $(document).on("click", "#pagination a", function () {
-                //get url and make final url for ajax
-                var url = $(this).attr("href");
-                var append = url.indexOf("?") == -1 ? "?" : "&";
-                var finalURL = url + append;
-                $.ajax({
-                    type:'GET',
-                    url: finalURL,
-                    success:function(data){
-                        $("#mytable").find($("tr")).slice(1).remove();
-                        $.each(data['data'],function (key, value){
-                            $('#table-header').after(`<tr>
+    @if(Auth::user()->role == 'user')
+        <script>
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $(function () {
+                $(document).on("click", "#pagination a", function () {
+                    //get url and make final url for ajax
+                    var url = $(this).attr("href");
+                    var append = url.indexOf("?") == -1 ? "?" : "&";
+                    var finalURL = url + append;
+                    $.ajax({
+                        type:'GET',
+                        url: finalURL,
+                        success:function(data){
+                            $("#mytable").find($("tr")).slice(1).remove();
+                            $.each(data['data'],function (key, value){
+                                $('#table-header').after(`<tr>
                 <td>${value.id}</td>
                 <td>${value.title}</td>
                 <td style="max-width: 30%">${value.content}</td>
                 <td>${value.post_category.title}</td>
                 <td>${value.status}</td>
             </tr>`);
-                        });
-                        $('ul.pagination').empty();
-                        if(!data['prev_page_url']){
-                            $('ul.pagination').append(`<li class="page-item disabled"><span class="page-link">«</span></li>`);
-                        }else{
-                            $('ul.pagination').append(`<li><a class="page-link" href="${data['prev_page_url']}" rel="next">«</a></li>`);
-                        }
-                        for (let i = 1; i <= data['last_page']; i++) {
-                            if(data['current_page'] === i){
-                                $('ul.pagination').append(`<li class="page-item active"><span class="page-link">${i}</span></li>`);
-                            } else{
-                                $('ul.pagination').append(`<li class="page-item"><a class="page-link" href="${data['path']}?per_page=${data['per_page']}&amp;page=${i}">${i}</a></li>`);
+                            });
+                            $('ul.pagination').empty();
+                            if(!data['prev_page_url']){
+                                $('ul.pagination').append(`<li class="page-item disabled"><span class="page-link">«</span></li>`);
+                            }else{
+                                $('ul.pagination').append(`<li><a class="page-link" href="${data['prev_page_url']}" rel="next">«</a></li>`);
                             }
-                        }
-                        if(!data['next_page_url']){
-                            $('ul.pagination').append(`<li class="page-item disabled"><span class="page-link">»</span></li>`);
-                        }else{
-                            $('ul.pagination').append(`<li class="page-item"><a class="page-link" href="${data['next_page_url']}" rel="next">»</a></li>`);
-                        }
-                    },
-                    error:function (data){
-                        alert(data);
-                    },
-                });
-                return false;
-            })
+                            for (let i = 1; i <= data['last_page']; i++) {
+                                if(data['current_page'] === i){
+                                    $('ul.pagination').append(`<li class="page-item active"><span class="page-link">${i}</span></li>`);
+                                } else{
+                                    $('ul.pagination').append(`<li class="page-item"><a class="page-link" href="${data['path']}?per_page=${data['per_page']}&amp;page=${i}">${i}</a></li>`);
+                                }
+                            }
+                            if(!data['next_page_url']){
+                                $('ul.pagination').append(`<li class="page-item disabled"><span class="page-link">»</span></li>`);
+                            }else{
+                                $('ul.pagination').append(`<li class="page-item"><a class="page-link" href="${data['next_page_url']}" rel="next">»</a></li>`);
+                            }
+                        },
+                        error:function (data){
+                            alert(data);
+                        },
+                    });
+                    return false;
+                })
+            });
+        </script>
+    @endif
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
         });
+
         // delete user
         $('.deleteUser').on('click', function (){
             let tr = $(this).closest('tr');
