@@ -8,13 +8,15 @@ put your database credential
 
 php artisan key:generate
 
-php artisan ui bootstrap
-
-npm install && npm run dev
-
-php artisan migrate --seed 
+php artisan migrate --seed
 
 ## credential
-Admin
+Active Admin
 email: admin@admin.com
 password: password
+
+Active User
+email: user@user.com
+password: password
+
+the other admins and users created randomly by seeder

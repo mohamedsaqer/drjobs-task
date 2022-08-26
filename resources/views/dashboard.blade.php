@@ -18,6 +18,8 @@
             </div>
         </div>
     </div>
+@endsection
+@section('modals')
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -58,10 +60,42 @@
                 var url = $(this).attr("href");
                 var append = url.indexOf("?") == -1 ? "?" : "&";
                 var finalURL = url + append;
-                //set to current url
-                window.history.pushState({}, null, finalURL);
-                $.get(finalURL, function (data) {
-                    $("#pagination_data").html(data);
+                $.ajax({
+                    type:'GET',
+                    url: finalURL,
+                    success:function(data){
+                        $("#mytable").find($("tr")).slice(1).remove();
+                        $.each(data['data'],function (key, value){
+                            $('#table-header').after(`<tr>
+                <td>${value.id}</td>
+                <td>${value.title}</td>
+                <td style="max-width: 30%">${value.content}</td>
+                <td>${value.post_category.title}</td>
+                <td>${value.status}</td>
+            </tr>`);
+                        });
+                        $('ul.pagination').empty();
+                        if(!data['prev_page_url']){
+                            $('ul.pagination').append(`<li class="page-item disabled"><span class="page-link">«</span></li>`);
+                        }else{
+                            $('ul.pagination').append(`<li><a class="page-link" href="${data['prev_page_url']}" rel="next">«</a></li>`);
+                        }
+                        for (let i = 1; i <= data['last_page']; i++) {
+                            if(data['current_page'] === i){
+                                $('ul.pagination').append(`<li class="page-item active"><span class="page-link">${i}</span></li>`);
+                            } else{
+                                $('ul.pagination').append(`<li class="page-item"><a class="page-link" href="${data['path']}?per_page=${data['per_page']}&amp;page=${i}">${i}</a></li>`);
+                            }
+                        }
+                        if(!data['next_page_url']){
+                            $('ul.pagination').append(`<li class="page-item disabled"><span class="page-link">»</span></li>`);
+                        }else{
+                            $('ul.pagination').append(`<li class="page-item"><a class="page-link" href="${data['next_page_url']}" rel="next">»</a></li>`);
+                        }
+                    },
+                    error:function (data){
+                        alert(data);
+                    },
                 });
                 return false;
             })
@@ -75,9 +109,15 @@
                 data:{_method: 'delete'},
                 success:function(data){
                     tr.remove();
+                    alert('user deleted successfully');
                 },
                 error:function (data){
-                    alert(JSON.parse(data.responseText));
+                    if(data['status'] === 403){
+                        // console.log(data['responseJSON']['message']);
+                        alert('You are not authorized to do this action, you can call your administrator');
+                    }else{
+                        alert(JSON.parse(data.responseText));
+                    }
                 },
             });
         });
@@ -123,13 +163,17 @@
                     if(data['status'] === 422){
                         var erroJson = JSON.parse(data.responseText);
                         //CLEAR ALL THE PREVIOUS ERRORS
-                        for (var err in erroJson) {
-                            for (var errstr of erroJson[err])
+                        $('div.alert-danger').remove();
+                        for (var err in erroJson['errors']) {
+                            for (var errstr of erroJson['errors'][err])
+                            {
                                 $("[name='" + err + "']").after("<div class='alert alert-danger'>" + errstr + "</div>");
+                            }
                         }
                     } else{
                         var erroJson = JSON.parse(data.responseText);
                         //CLEAR ALL THE PREVIOUS ERRORS
+                        $('div.alert-danger').remove();
                         $('#btn-submit').after("<div class='alert alert-danger'>" + erroJson + "</div>");
                     }
                 },

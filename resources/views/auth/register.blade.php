@@ -20,57 +20,49 @@
     </style>
 </head>
 <body>
-
 <div class="limiter">
     <div class="container-login100">
         <div class="wrap-login100">
             <div class="login100-pic js-tilt" data-tilt>
                 <img src="{{ asset('loginAssets/images/img-01.png') }}" alt="IMG">
             </div>
-
             <form class="login100-form validate-form">
                 <span class="login100-form-title">
                     Register Form
                 </span>
-
                 <div class="wrap-input100 validate-input" data-validate = "Name is required">
-                    <input class="input100 @error('name') is-invalid @enderror" id="name" type="text" name="name" placeholder="Name"  value="{{ old('name') }}" required autocomplete="name" autofocus>
+                    <input class="input100" id="name" type="text" name="name" placeholder="Name"  value="{{ old('name') }}" required autocomplete="name" autofocus>
                     <span class="focus-input100"></span>
                     <span class="symbol-input100">
                         <i class="fa fa-user-circle" aria-hidden="true"></i>
                     </span>
                 </div>
-
                 <div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
-                    <input class="input100 @error('email') is-invalid @enderror" id="email" type="email" name="email" placeholder="Email"  value="{{ old('email') }}" required autocomplete="email" autofocus>
+                    <input class="input100" id="email" type="email" name="email" placeholder="Email"  value="{{ old('email') }}" required autocomplete="email" autofocus>
                     <span class="focus-input100"></span>
                     <span class="symbol-input100">
                         <i class="fa fa-envelope" aria-hidden="true"></i>
                     </span>
                 </div>
-
                 <div class="wrap-input100 validate-input" data-validate = "Password is required">
-                    <input class="input100 @error('password') is-invalid @enderror" type="password" id="password" name="password" placeholder="Password" required autocomplete="new-password">
+                    <input class="input100" type="password" id="password" name="password" placeholder="Password" required autocomplete="new-password">
                     <span class="focus-input100"></span>
                     <span class="symbol-input100">
                         <i class="fa fa-lock" aria-hidden="true"></i>
                     </span>
                 </div>
-
                 <div class="wrap-input100 validate-input" data-validate = "Password confirmation is required">
-                    <input class="input100 @error('password-confirm') is-invalid @enderror" type="password" id="password-confirm" name="password_confirmation" placeholder="Password Confirmation" required autocomplete="new-password">
+                    <input class="input100" type="password" id="password-confirm" name="password_confirmation" placeholder="Password Confirmation" required autocomplete="new-password">
                     <span class="focus-input100"></span>
                     <span class="symbol-input100">
                         <i class="fa fa-lock" aria-hidden="true"></i>
                     </span>
                 </div>
-
                 <div class="container-login100-form-btn">
                     <button class="login100-form-btn" id="btn-submit">
                         Register
                     </button>
                 </div>
-
                 <div class="text-center p-t-136">
                     <a class="txt2" href="{{ route('login') }}">
                         Have an Account
@@ -81,7 +73,6 @@
         </div>
     </div>
 </div>
-
 
 <script src="{{ asset('loginAssets/vendor/jquery/jquery-3.2.1.min.js') }}"></script>
 <script src="{{ asset('loginAssets/vendor/bootstrap/js/popper.js') }}"></script>
@@ -109,15 +100,14 @@
 
         $.ajax({
             type:'POST',
-            url:"{{ route('authController.register') }}",
+            url:"{{ route('register') }}",
             data:{
-                password:password,
-                email:email,
                 name:name,
+                email:email,
+                password:password,
                 password_confirmation:password_confirmation,
             },
             success:function(data){
-                console.log(data);
                 if(data['status'] === 'success'){
                     $('#btn-submit').after("<div class='alert alert-success mt-3'>User Created successfully</div>");
                     window.location.href = "{{ route('login') }}"
@@ -127,6 +117,7 @@
                 if(data['status'] === 422){
                     var erroJson = JSON.parse(data.responseText);
                     //CLEAR ALL THE PREVIOUS ERRORS
+                    $('div.alert-danger').remove();
                     for (var err in erroJson) {
                         for (var errstr of erroJson[err])
                             $("[name='" + err + "']").after("<div class='alert alert-danger'>" + errstr + "</div>");
@@ -134,11 +125,11 @@
                 } else{
                     var erroJson = JSON.parse(data.responseText);
                     //CLEAR ALL THE PREVIOUS ERRORS
+                    $('div.alert-danger').remove();
                     $('#btn-submit').after("<div class='alert alert-danger'>" + erroJson + "</div>");
                 }
             },
         });
-
     });
 </script>
 </body>

@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PostCategory;
-use App\Http\Requests\StorePostCategoryRequest;
-use App\Http\Requests\UpdatePostCategoryRequest;
+use App\PostCategory;
+use Illuminate\Http\Request;
 
 class PostCategoryController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -31,10 +40,10 @@ class PostCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StorePostCategoryRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorePostCategoryRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -42,7 +51,7 @@ class PostCategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\PostCategory  $postCategory
+     * @param  \App\PostCategory  $postCategory
      * @return \Illuminate\Http\Response
      */
     public function show(PostCategory $postCategory)
@@ -53,7 +62,7 @@ class PostCategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\PostCategory  $postCategory
+     * @param  \App\PostCategory  $postCategory
      * @return \Illuminate\Http\Response
      */
     public function edit(PostCategory $postCategory)
@@ -64,11 +73,11 @@ class PostCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdatePostCategoryRequest  $request
-     * @param  \App\Models\PostCategory  $postCategory
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\PostCategory  $postCategory
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePostCategoryRequest $request, PostCategory $postCategory)
+    public function update(Request $request, PostCategory $postCategory)
     {
         //
     }
@@ -76,7 +85,7 @@ class PostCategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\PostCategory  $postCategory
+     * @param  \App\PostCategory  $postCategory
      * @return \Illuminate\Http\Response
      */
     public function destroy(PostCategory $postCategory)

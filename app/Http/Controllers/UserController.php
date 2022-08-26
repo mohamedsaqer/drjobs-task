@@ -2,38 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Http\Requests\UpdateUserRequest;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function show($id)
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
     {
-        return User::findOrFail($id);
+        $this->middleware('auth');
     }
 
-    public function update($id, Request $request)
+    public function show(User $user)
     {
-        $user = User::findOrFail($id);
-        $validator = Validator::make($request->all(), [
-            'name'     => 'required|string',
-            'email'    => 'required|email|unique:users,email,'. $user->id,
-            'status' => 'required|in:active,inactive',
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        } else {
-            $user->update($request->all());
-            return response()->json(['status' => 'success', 'user' => $user], 200);
-        }
+        return $user;
     }
 
-    public function destroy($id)
+    public function update(User $user, UpdateUserRequest $request)
     {
-        $user = User::findOrFail($id);
+        $this->authorize('update', $user);
+        $user->update($request->validated());
+        return response()->json(['status' => 'success', 'user' => $user], 200);
+    }
+
+    public function destroy(User $user)
+    {
+        $this->authorize('delete', $user);
+        // we can use soft delete
         $user->posts()->delete();
         $user->delete();
-        return response()->json(['message' => 'User Deleted successfully']);
+        return response()->json(['message' => 'User Deleted successfully'], 200);
     }
 }

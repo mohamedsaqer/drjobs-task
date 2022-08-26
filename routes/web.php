@@ -1,9 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,10 +15,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 Auth::routes();
-Route::post('/login', [AuthController::class, 'login'])->name('authController.login');
-Route::post('/register', [AuthController::class, 'register'])->name('authController.register');
-Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
-Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
-Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
-Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.delete');
-
+Route::get('/home', 'HomeController@dashboard')->name('home');
+Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');
+Route::resource('users', 'UserController');
